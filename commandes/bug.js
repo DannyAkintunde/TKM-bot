@@ -228,7 +228,27 @@ zokou(
     if (!arg[0])
       return await repondre(`Use ${prefixe}pmbug amount\n> Example ${prefixe}pmbug 30|${conf.NUMERO_OWNER} or ${prefixe}pmbug ${conf.NUMERO_OWNER}`);
     await loading(dest, zk);
-    await repondre(`${arg.join(',')}`);
+    const text = arg.join('');
+    let amount = 30;
+    let victims = [];
+    if (arg.length === 1){
+      victims.push(arg[0])
+      await repondre(`sending ${amount} bugs to ${victims[0]}`)
+    } else {
+      amount = parseInt(text.split('|')[0].trim());
+      if (isNaN(amount)){
+        return await repondre(`amount must be a valid intiger between 1-${conf.BOOM_MESSAGE_LIMIT}`);
+      } else {
+        victims = text.split('|')[1].split(',').map(x => x.trim());
+        if (victims.length > 0){
+          await repondre(`sending ${amount} bugs to ${victims.join(', ')}`);
+        } else {
+          return await repondre('No victims specfied');
+        }
+      }
+    }
     await react(dest, zk, ms, '✅');
   }
   );
+  
+  
